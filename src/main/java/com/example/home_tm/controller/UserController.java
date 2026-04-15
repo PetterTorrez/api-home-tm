@@ -22,4 +22,9 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return this.userService.findUserById(id);
     }
+
+    @GetMapping("/")
+    public ResponseEntity<Iterable<User>> getAllUsers() {
+        return this.userService.findAllUsers();
+    }
 }

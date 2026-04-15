@@ -21,4 +21,8 @@ public class UserService {
             .orElse(ResponseEntity.notFound().build());
     }
     
+    public ResponseEntity<Iterable<User>> findAllUsers() {
+        Iterable<User> users = this.userRepository.findAll();
+        return ResponseEntity.ok(users);
+    }
 }
