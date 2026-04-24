@@ -35,7 +35,7 @@ public class Role {
         this.name = name;
     }
 
-    private enum RoleName {
+    public enum RoleName {
         ADMIN,
         MANAGER,
         MEMBER,
