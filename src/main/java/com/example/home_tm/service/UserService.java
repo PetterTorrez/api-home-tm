@@ -1,18 +1,23 @@
 package com.example.home_tm.service;
 
-import org.springframework.http.ResponseEntity;
+import java.time.LocalDateTime;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.home_tm.dto.user.UserRequestDTO;
 import com.example.home_tm.dto.user.UserResponseDTO;
+import com.example.home_tm.dto.user.UserUpdateRequestDTO;
 import com.example.home_tm.entity.User;
 import com.example.home_tm.mapper.UserMapper;
 import com.example.home_tm.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -37,14 +42,53 @@ public class UserService {
         return userMapper.toResponseDTO(userSaved);
     }
 
-    public ResponseEntity<User> findUserById(Integer id) {
-        return this.userRepository.findById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public UserResponseDTO findUserById(Integer id) {
+        User user = this.userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        if (user.getDeletedAt() != null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found.");
+        }
+
+        return userMapper.toResponseDTO(user);
     }
     
-    public ResponseEntity<Iterable<User>> findAllUsers() {
-        Iterable<User> users = this.userRepository.findAll();
-        return ResponseEntity.ok(users);
+    @Transactional
+    public UserResponseDTO updateUser(Integer id, UserUpdateRequestDTO userDto) {
+        User user = this.userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        if (user.getDeletedAt() != null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found.");
+        }
+
+        if (userDto.getName() != null) {
+            user.setUsername(userDto.getName());
+        }
+
+        if (userDto.getEmail() != null) {
+            if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+                throw new IllegalArgumentException("Email already exists: " + userDto.getEmail());
+            }
+            user.setEmail(userDto.getEmail());
+        }
+        
+        if (userDto.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+ 
+        this.userRepository.save(user);
+
+        return userMapper.toResponseDTO(user);
+    }
+
+    @Transactional
+    public void deleteUserById(Integer id) {
+        User user = this.userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+
+        if (user.getDeletedAt() != null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found.");
+        }
+
+        user.setDeletedAt(LocalDateTime.now());
+        this.userRepository.save(user);
     }
 }

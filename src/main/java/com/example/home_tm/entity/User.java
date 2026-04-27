@@ -1,5 +1,10 @@
 package com.example.home_tm.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +23,15 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+    
+    private LocalDateTime deletedAt;
+    
     public User(){}
 
     public User(Integer id, String userName, String email, String password) {
@@ -57,5 +71,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }    
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
 }

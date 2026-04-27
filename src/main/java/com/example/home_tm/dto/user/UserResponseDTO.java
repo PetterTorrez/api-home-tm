@@ -1,17 +1,14 @@
 package com.example.home_tm.dto.user;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponseDTO {
     private Integer id;
     private String name;
     private String email;
-    
-    public UserResponseDTO() {}
-
-    public UserResponseDTO(Integer id, String name, String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
 
     public Integer getId() {
         return id;

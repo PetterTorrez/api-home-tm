@@ -3,7 +3,11 @@ package com.example.home_tm.dto.user;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserUpdateRequestDTO {
     @Pattern(regexp = ".*\\S.*", message = "Name cannot be only spaces")
     @Size(min = 5, max = 120, message = "Name must be between 5 and 120 characters")
@@ -16,14 +20,6 @@ public class UserUpdateRequestDTO {
     @Pattern(regexp = ".*\\S.*", message = "Password cannot be only spaces")
     @Size(min = 6, max = 60, message = "Password must be between 6 and 60 characters")
     private String password;
-
-    public UserUpdateRequestDTO() {}
-
-    public UserUpdateRequestDTO(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
 
     public String getName() {
         return name;
