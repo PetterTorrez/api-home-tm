@@ -7,6 +7,6 @@ CREATE TABLE task (
     created_by INT NOT NULL,
     group_id INT NOT NULL,
     CONSTRAINT fk_task_user FOREIGN KEY (created_by) REFERENCES user(id),
-    CONSTRAINT fk_task_group FOREIGN KEY (group_id) REFERENCES `group`(id),
+    CONSTRAINT fk_task_group FOREIGN KEY (group_id) REFERENCES user_group(id),
     CONSTRAINT chk_task_points CHECK (points BETWEEN 1 AND 5)
 );
