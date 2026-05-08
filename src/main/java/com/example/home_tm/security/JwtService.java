@@ -20,9 +20,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    public String generateToken(String username) {
+    public String generateToken(AuthenticatedUser authUser) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(authUser.getEmail())
+                .claim("userId", authUser.getId())
+                .claim("name", authUser.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
