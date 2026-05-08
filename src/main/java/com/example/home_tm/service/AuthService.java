@@ -9,9 +9,7 @@ import com.example.home_tm.dto.auth.AuthResponseDTO;
 import com.example.home_tm.security.JwtService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @AllArgsConstructor
 public class AuthService {
@@ -20,16 +18,14 @@ public class AuthService {
 
 
     public AuthResponseDTO autenticate(AuthRequestDTO authRequestDTO) {
-        log.info("Entro a autenticate");
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 authRequestDTO.getEmail(),
                 authRequestDTO.getPassword()
             )
         );
-        log.info("El token se va a generar con el correo: {}", authRequestDTO.getEmail());
+
         String token = jwtService.generateToken(authRequestDTO.getEmail());
-        log.info("El token es: {}", token);
 
         return AuthResponseDTO.builder().token(token).build();
     }
