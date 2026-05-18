@@ -15,9 +15,7 @@ import com.example.home_tm.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 public class UserService {
     private final UserRepository userRepository;
