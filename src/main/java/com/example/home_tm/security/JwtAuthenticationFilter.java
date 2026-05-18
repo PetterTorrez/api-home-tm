@@ -1,6 +1,7 @@
 package com.example.home_tm.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,11 +27,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
-
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -41,9 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = authHeader.substring(7);
 
         String userEmail = jwtService.extractUsername(jwt);
+        Integer userId = jwtService.extractUserId(jwt);
 
-        if (userEmail != null
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (userEmail != null&& SecurityContextHolder.getContext().getAuthentication() == null) {
+            AuthenticatedUser authUser = AuthenticatedUser.builder().email(userEmail).id(userId).build();
 
             UserDetails userDetails =
                     userDetailsService.loadUserByUsername(userEmail);
@@ -52,9 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,
+                                authUser,
                                 null,
-                                userDetails.getAuthorities()
+                                List.of()
                         );
 
                 authToken.setDetails(
