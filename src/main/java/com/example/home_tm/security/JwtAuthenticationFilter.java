@@ -12,6 +12,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.home_tm.service.CustomUserDetailsService;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,32 +42,57 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwt = authHeader.substring(7);
 
-        String userEmail = jwtService.extractUsername(jwt);
-        Integer userId = jwtService.extractUserId(jwt);
+        try {
+            String userEmail = jwtService.extractUsername(jwt);
+            Integer userId = jwtService.extractUserId(jwt);
 
-        if (userEmail != null&& SecurityContextHolder.getContext().getAuthentication() == null) {
-            AuthenticatedUser authUser = AuthenticatedUser.builder().email(userEmail).id(userId).build();
+            if (userEmail != null&& SecurityContextHolder.getContext().getAuthentication() == null) {
+                AuthenticatedUser authUser = AuthenticatedUser.builder().email(userEmail).id(userId).build();
 
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(userEmail);
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(userEmail);
 
-            if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
+                if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                authUser,
-                                null,
-                                List.of()
-                        );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    authUser,
+                                    null,
+                                    List.of()
+                            );
 
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
-                );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
 
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authToken);
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(authToken);
+                }
             }
+        } catch (ExpiredJwtException ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("""
+                {
+                    "success": false,
+                    "message": "Token expirado"
+                }
+            """);
+
+            return;
+
+        } catch (JwtException ex) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("""
+                {
+                    "success": false,
+                    "message": "Token inválido"
+                }
+            """);
+
+            return;
         }
 
         filterChain.doFilter(request, response);

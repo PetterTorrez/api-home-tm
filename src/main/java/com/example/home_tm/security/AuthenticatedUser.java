@@ -12,5 +12,4 @@ import lombok.ToString;
 public class AuthenticatedUser {
     private Integer id;
     private String email;
-    private String name;
 }
