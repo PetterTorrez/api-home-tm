@@ -6,12 +6,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.home_tm.dto.user.UserRequestDTO;
 import com.example.home_tm.dto.user.UserResponseDTO;
 import com.example.home_tm.dto.user.UserUpdateRequestDTO;
 import com.example.home_tm.payload.ApiResponse;
@@ -31,14 +29,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> createUser(@Valid @RequestBody UserRequestDTO userDto) {
-        UserResponseDTO userResponse = this.userService.createUser(userDto);
-
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(new ApiResponse<>(true, "User created successfully", userResponse));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponseDTO>> getUserById(@AuthenticationPrincipal AuthenticatedUser authenticatedUser, @PathVariable Integer id) {
