@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.home_tm.dto.auth.AuthRequestDTO;
 import com.example.home_tm.dto.auth.AuthResponseDTO;
+import com.example.home_tm.dto.user.UserRequestDTO;
+import com.example.home_tm.dto.user.UserResponseDTO;
 import com.example.home_tm.security.AuthenticatedUser;
 import com.example.home_tm.security.CustomUserDetails;
 import com.example.home_tm.security.JwtService;
@@ -16,6 +18,7 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class AuthService {
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
@@ -38,5 +41,9 @@ public class AuthService {
         String token = jwtService.generateToken(authenticatedUser);
 
         return AuthResponseDTO.builder().token(token).build();
+    }
+
+    public UserResponseDTO registerUser(UserRequestDTO userDto) {
+        return this.userService.createUser(userDto);
     }
 }
