@@ -4,14 +4,20 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(
-    name="user_group",
+    name = "user_group",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "created_by"})
+        @UniqueConstraint(columnNames = { "name", "created_by" })
     }
 )
 public class UserGroup {
+
     public UserGroup() {}
-    
+
+    public UserGroup(String name, User createdBy) {
+        this.name = name;
+        this.createdBy = createdBy;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -45,5 +51,5 @@ public class UserGroup {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
-    }   
+    }
 }
