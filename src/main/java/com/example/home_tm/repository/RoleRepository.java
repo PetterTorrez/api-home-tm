@@ -1,6 +1,10 @@
 package com.example.home_tm.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.home_tm.entity.Role;
+import com.example.home_tm.enums.RoleName;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RoleRepository extends JpaRepository<Role, Integer> {}
+public interface RoleRepository extends JpaRepository<Role, Integer> {
+    Optional<Role> findByName(RoleName name);
+}
